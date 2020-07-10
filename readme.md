@@ -14,6 +14,6 @@ use `curl` to make requests when running puppeteer tests for the purpose of crea
 
 - [x] output
   - [x] dump `curl` output to screen as requests are processed
-  - [ ] or capture output and request metadata for rendering elsewhere
+  - [ ] optionally capture output and request metadata for rendering elsewhere
   - [ ] control output type via env var
 - [ ] use `jq` to improve output when present
