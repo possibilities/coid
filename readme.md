@@ -12,5 +12,7 @@ use `curl` to make requests when running puppeteer tests for the purpose of crea
 
 ##### features
 
-- [ ] Dump `curl` output to screen as requests are processed or capture output and request metadata for rendering elsewhere
-- [ ] Use `jq` to improve output when present
+- [ ] output
+  - [ ] dump `curl` output to screen as requests are processed
+  - [ ] or capture output and request metadata for rendering elsewhere
+- [ ] use `jq` to improve output when present
