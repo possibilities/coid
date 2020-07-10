@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "start": "node test",
+    "watch": "nodemon --exec 'node test' --ext 'js'"
+  },
+  "dependencies": {
+    "dedent": "^0.7.0",
+    "puppeteer": "^5.0.0",
+    "shelljs": "^0.8.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5"
+  }
+}
