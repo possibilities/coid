@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer')
 const { parseUrl } = require('url')
 const { spawn } = require('child_process')
 
+const shouldFormatJson = process.argv.includes('--format')
+
 const appUrl = 'https://react-redux.realworld.io'
 const apiUrl = 'https://conduit.productionready.io/api'
 
@@ -30,10 +32,10 @@ const main = async () => {
 
       const allOutput = []
 
-      const standardOuput = []
+      const standardOutput = []
       curling.stdout.on('data', data => {
         allOutput.push(data)
-        standardOuput.push(data)
+        standardOutput.push(data)
       })
 
       const errorOutput = []
@@ -49,13 +51,19 @@ const main = async () => {
           .find(line => line.startsWith('< status: '))
         const status = parseInt(statusLine.match(/(\d){3}/g)[0])
 
-        console.info(allOutput.join(''))
+        process.stdout.write(errorOutput.join(''))
+        process.stdout.write(
+          shouldFormatJson
+            ? JSON.stringify(JSON.parse(standardOutput.join('')), null, 2)
+            : standardOutput.join(''),
+        )
+        process.stdout.write('\n')
         return request.respond({
           headers: {
             'access-control-allow-origin': '*',
           },
           contentType: 'application/json',
-          body: standardOuput.join(''),
+          body: standardOutput.join(''),
           status,
         })
       })
