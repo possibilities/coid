@@ -27,16 +27,15 @@ const main = async () => {
     if (url.startsWith(apiUrl)) {
       const curlArgs = curlArgumentsForRequest(request)
       const curling = spawn('curl', curlArgs)
-      curling.stdout.pipe(process.stdout)
-      curling.stderr.pipe(process.stderr)
 
-      const standardOutput = []
+      const allOutput = []
       curling.stdout.on('data', data => {
-        standardOutput.push(data)
+        allOutput.push(data)
       })
 
       const errorOutput = []
       curling.stderr.on('data', data => {
+        allOutput.push(data)
         errorOutput.push(data)
       })
 
@@ -47,13 +46,13 @@ const main = async () => {
           .find(line => line.startsWith('< status: '))
         const status = parseInt(statusLine.match(/(\d){3}/g)[0])
 
-        process.stdout.write('\n')
+        console.info(allOutput.join(''))
         return request.respond({
           headers: {
             'access-control-allow-origin': '*',
           },
           contentType: 'application/json',
-          body: standardOutput.join(''),
+          body: allOutput.join(''),
           status,
         })
       })
