@@ -45,8 +45,9 @@ const main = async () => {
           .join('')
           .split('\n')
           .find(line => line.startsWith('< status: '))
-        const status = statusLine && parseInt(statusLine.match(/(\d){3}/g)[0])
+        const status = parseInt(statusLine.match(/(\d){3}/g)[0])
 
+        process.stdout.write('\n')
         return request.respond({
           headers: {
             'access-control-allow-origin': '*',
