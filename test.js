@@ -2,12 +2,13 @@ const puppeteer = require('puppeteer')
 const { parseUrl } = require('url')
 const { spawn } = require('child_process')
 
+const shouldShowBrowser = process.argv.includes('--browser')
 const shouldFormatJson = process.argv.includes('--format')
 
 const appUrl = 'https://react-redux.realworld.io'
 const apiUrl = 'https://conduit.productionready.io/api'
 
-const puppeteerConfig = { headless: false, devtools: true }
+const puppeteerConfig = { headless: !shouldShowBrowser, devtools: true }
 
 const curlArgumentsForRequest = request => [
   '-v',
