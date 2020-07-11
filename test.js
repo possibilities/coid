@@ -1,77 +1,18 @@
 const puppeteer = require('puppeteer')
-const { parseUrl } = require('url')
-const { spawn } = require('child_process')
+const useCurlForPuppeteerRequests = require('./useCurlForPuppeteerRequests')
 
 const shouldShowBrowser = process.argv.includes('--browser')
-const shouldFormatJson = process.argv.includes('--format')
-
-const appUrl = 'https://react-redux.realworld.io'
-const apiUrl = 'https://conduit.productionready.io/api'
 
 const puppeteerConfig = { headless: !shouldShowBrowser, devtools: true }
 
-const curlArgumentsForRequest = request => [
-  '-v',
-  request.url(),
-  '-H',
-  `user-agent: ${request.headers()['user-agent']}`,
-  '-H',
-  `referer: ${request.headers()['referer']}`,
-]
+const appUrl = 'https://react-redux.realworld.io'
+const apiUrl = 'https://conduit.productionready.io/api'
 
 const main = async () => {
   const browser = await puppeteer.launch(puppeteerConfig)
   const page = await browser.newPage()
 
-  await page.setRequestInterception(true)
-
-  page.on('request', request => {
-    const url = request.url()
-    if (url.startsWith(apiUrl)) {
-      const curlArgs = curlArgumentsForRequest(request)
-      const curling = spawn('curl', curlArgs)
-
-      const allOutput = []
-
-      const standardOutput = []
-      curling.stdout.on('data', data => {
-        allOutput.push(data)
-        standardOutput.push(data)
-      })
-
-      const errorOutput = []
-      curling.stderr.on('data', data => {
-        allOutput.push(data)
-        errorOutput.push(data)
-      })
-
-      curling.on('close', data => {
-        const statusLine = errorOutput
-          .join('')
-          .split('\n')
-          .find(line => line.startsWith('< status: '))
-        const status = parseInt(statusLine.match(/(\d){3}/g)[0])
-
-        process.stdout.write(errorOutput.join(''))
-        process.stdout.write(
-          shouldFormatJson
-            ? JSON.stringify(JSON.parse(standardOutput.join('')), null, 2)
-            : standardOutput.join(''),
-        )
-        process.stdout.write('\n')
-        return request.respond({
-          headers: {
-            'access-control-allow-origin': '*',
-          },
-          contentType: 'application/json',
-          body: standardOutput.join(''),
-          status,
-        })
-      })
-    } else {
-      request.continue()
-    }
-  })
+  useCurlForPuppeteerRequests(page, { urlPrefix: apiUrl })
 
   await Promise.all([page.waitForNavigation(), page.goto(appUrl)])
 
