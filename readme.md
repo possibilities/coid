@@ -4,7 +4,7 @@ curl or it didn't happen
 
 ## summary
 
-an experiment where i stick curl in unexpected places
+sticking curl in unexpected places
 
 #### experiment 1
 
