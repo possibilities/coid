@@ -29,8 +29,11 @@ const main = async () => {
       const curling = spawn('curl', curlArgs)
 
       const allOutput = []
+
+      const standardOuput = []
       curling.stdout.on('data', data => {
         allOutput.push(data)
+        standardOuput.push(data)
       })
 
       const errorOutput = []
@@ -52,7 +55,7 @@ const main = async () => {
             'access-control-allow-origin': '*',
           },
           contentType: 'application/json',
-          body: allOutput.join(''),
+          body: standardOuput.join(''),
           status,
         })
       })
