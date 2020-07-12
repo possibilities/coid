@@ -21,8 +21,7 @@ const useCurlForPuppeteerRequests = async (
   page.on('request', request => {
     const url = request.url()
     if (url.startsWith(urlToInterceptRequestsFor)) {
-      const curlArgs = curlArgumentsForRequest(request)
-      const curling = spawn('curl', curlArgs)
+      const curling = spawn('curl', ['-v', request.url()])
 
       const allOutput = []
 
@@ -45,6 +44,8 @@ const useCurlForPuppeteerRequests = async (
           .find(line => line.startsWith('< status: '))
         const status = parseInt(statusLine.match(/(\d){3}/g)[0])
 
+        process.stdout.write(`curl -v ${request.url()} \\\n`)
+        process.stdout.write(`\n`)
         process.stdout.write(errorOutput.join(''))
         process.stdout.write(
           shouldFormatJson
